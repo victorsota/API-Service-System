@@ -7,6 +7,7 @@ import {
 } from "typeorm";
 import { TipoProduto } from "./TipoProduto";
 import { join } from "path";
+import { Cliente } from "./Cliente";
 
 @Entity("produtos")
 export class Produto {
@@ -23,10 +24,17 @@ export class Produto {
   @Column({ type: "int" })
   preco: number;
 
+  @Column({ type: "int" })
+  quantidade: number;
+
   // relacionamento 1 para muitos (QUEM RECEBE OS DADOS)
   @ManyToOne(() => TipoProduto, (tipo) => tipo.produtos)
 
   // nome da chave estrangeira no banco de dados
   @JoinColumn({ name: "tipo_id" })
   tipo: TipoProduto;
+
+  // Relacionamento N:N
+  @ManyToOne(() => Cliente, (cliente) => cliente.produtos)
+  clientes: Cliente[];
 }
