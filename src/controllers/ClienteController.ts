@@ -1,5 +1,6 @@
 import { Request, Response } from "express";
 import { clienteRepository } from "../repositories/ClienteRepository";
+import { produtoRepository } from "../repositories/ProdutoRepository";
 
 export class ClienteController {
   async create(req: Request, res: Response) {

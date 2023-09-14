@@ -1,11 +1,5 @@
-import {
-  Column,
-  Entity,
-  JoinTable,
-  ManyToMany,
-  PrimaryGeneratedColumn,
-} from "typeorm";
-import { Produto } from "./Produto";
+import { Column, Entity, OneToMany, PrimaryGeneratedColumn } from "typeorm";
+import { Venda } from "./Venda";
 
 @Entity("clientes")
 export class Cliente {
@@ -20,18 +14,7 @@ export class Cliente {
 
   @Column({ type: "varchar" })
   email: string;
-  // Relacionamento N:N
-  @ManyToMany(() => Produto, (produto) => produto.clientes)
-  @JoinTable({
-    name: "vendas",
-    joinColumn: {
-      name: "produto_id",
-      referencedColumnName: "id",
-    },
-    inverseJoinColumn: {
-      name: "cliente_id",
-      referencedColumnName: "id",
-    },
-  })
-  produtos: Produto[];
+
+  @OneToMany(() => Venda, (venda) => venda.cliente)
+  vendas: Venda[];
 }
