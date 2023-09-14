@@ -2,12 +2,13 @@ import {
   Column,
   Entity,
   JoinColumn,
+  ManyToMany,
   ManyToOne,
+  OneToMany,
   PrimaryGeneratedColumn,
 } from "typeorm";
 import { TipoProduto } from "./TipoProduto";
-import { join } from "path";
-import { Cliente } from "./Cliente";
+import { Venda } from "./Venda";
 
 @Entity("produtos")
 export class Produto {
@@ -34,7 +35,6 @@ export class Produto {
   @JoinColumn({ name: "tipo_id" })
   tipo: TipoProduto;
 
-  // Relacionamento N:N
-  @ManyToOne(() => Cliente, (cliente) => cliente.produtos)
-  clientes: Cliente[];
+  @OneToMany(() => Venda, (venda) => venda.produto)
+  vendas: Venda[];
 }
