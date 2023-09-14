@@ -10,5 +10,6 @@ routes.post("/tipos_produto", new TipoProdutoContoller().create);
 routes.post("/produto", new ProdutoController().create);
 routes.post("/cliente", new ClienteController().create);
 routes.post("/venda", new VendaController().create);
+routes.get("/venda", new VendaController().listar);
 
 export default routes;
