@@ -4,25 +4,25 @@ import { TipoProdutoRepository } from "../repositories/TipoProdutoRepository";
 
 export class ProdutoController {
   async create(req: Request, res: Response) {
-    const { nome, descricao, preco, quantidade, tipoId } = req.body;
+    const { nome, descricao, preco, quantidade, tipo } = req.body;
 
     try {
-      const tipo = await TipoProdutoRepository.findOneBy({
-        id: Number(tipoId),
-      });
-      if (!tipo) {
+      const tipoProduto = await TipoProdutoRepository.findOneBy({ id: tipo });
+      if (!tipoProduto) {
         return res.status(400).json({ message: "Tipo de produto não existe" });
       }
+
       const newProduto = await produtoRepository.create({
         nome,
         descricao,
         preco,
         quantidade,
-        tipo,
+        tipo: tipoProduto,
       });
       await produtoRepository.save(newProduto);
       return res.status(201).json(newProduto);
     } catch (error) {
+      console.error("Erro ao criar um novo produto:", error);
       return res.status(500).json({ message: "Erro interno" });
     }
   }

@@ -5,7 +5,6 @@ import { produtoRepository } from "../repositories/ProdutoRepository";
 export class ClienteController {
   async create(req: Request, res: Response) {
     const { nome, cpf, email } = req.body;
-
     try {
       const newCliente = await clienteRepository.create({
         nome,
