@@ -3,6 +3,8 @@ import { TipoProdutoContoller } from "./controllers/TipoProdutoController";
 import { ProdutoController } from "./controllers/ProdutoController";
 import { ClienteController } from "./controllers/ClienteController";
 import { VendaController } from "./controllers/VendaController";
+import { UserController } from "./controllers/UserController";
+import { Auth } from "./controllers/AuthController";
 
 const routes = Router();
 
@@ -30,4 +32,21 @@ routes.put("/cliente/:id", new ClienteController().update);
 routes.post("/venda", new VendaController().create);
 routes.get("/vendas", new VendaController().listar);
 
+//Rotas de Usuario
+routes.post("/users", new UserController().create);
+routes.get("/users", new UserController().list);
+routes.get("/users/:id", new UserController().findById);
+routes.post("/login", new Auth().login);
+routes.get("/login", new Auth().login);
+routes.post(
+  "/RotaAuth",
+  new Auth().verifyToken,
+  new UserController().autentication
+);
+routes.get(
+  "/user",
+  new Auth().verifyToken,
+  new UserController().getUserByToken
+);
+routes.get("/profile", new Auth().getProfile);
 export default routes;
