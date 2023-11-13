@@ -8,6 +8,24 @@ import { Auth } from "./controllers/AuthController";
 
 const routes = Router();
 
+//Rotas de Usuario
+routes.post("/users", new UserController().create);
+routes.get("/users", new UserController().list);
+routes.get("/users/:id", new UserController().findById);
+routes.post("/login", new Auth().login);
+routes.get("/login", new Auth().login);
+routes.post(
+  "/RotaAuth",
+  new Auth().verifyToken,
+  new UserController().autentication
+);
+routes.get(
+  "/user",
+  new Auth().verifyToken,
+  new UserController().getUserByToken
+);
+routes.get("/profile", new Auth().getProfile);
+
 //Rotas Tipo Produto
 routes.post("/tipos_produto", new TipoProdutoContoller().create);
 routes.get("/tipos_produtos", new TipoProdutoContoller().listar);
@@ -32,21 +50,4 @@ routes.put("/cliente/:id", new ClienteController().update);
 routes.post("/venda", new VendaController().create);
 routes.get("/vendas", new VendaController().listar);
 
-//Rotas de Usuario
-routes.post("/users", new UserController().create);
-routes.get("/users", new UserController().list);
-routes.get("/users/:id", new UserController().findById);
-routes.post("/login", new Auth().login);
-routes.get("/login", new Auth().login);
-routes.post(
-  "/RotaAuth",
-  new Auth().verifyToken,
-  new UserController().autentication
-);
-routes.get(
-  "/user",
-  new Auth().verifyToken,
-  new UserController().getUserByToken
-);
-routes.get("/profile", new Auth().getProfile);
 export default routes;

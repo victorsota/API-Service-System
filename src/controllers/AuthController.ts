@@ -1,6 +1,7 @@
 import { Request, Response } from "express";
 import { UserRepository } from "../repositories/UserRepository";
 import * as jwt from "jsonwebtoken";
+import * as bcrypt from "bcrypt";
 
 type jwtPayload = {
   id: string;
@@ -33,7 +34,9 @@ export class Auth {
         });
       }
 
-      if (user.password !== password) {
+      const passwordHash = await bcrypt.compare(password, user.password);
+
+      if (!passwordHash) {
         return res.status(400).json({
           message: "Dados inválidos",
         });
