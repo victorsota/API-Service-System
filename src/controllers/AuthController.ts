@@ -1,13 +1,14 @@
+// AuthController.ts
 import { Request, Response } from "express";
 import { UserRepository } from "../repositories/UserRepository";
-import * as jwt from "jsonwebtoken";
+import { JwtUtils } from "../utils/jwtUtils";
 import * as bcrypt from "bcrypt";
 
-type jwtPayload = {
-  id: string;
+type JwtPayload = {
+  userId: string;
 };
 
-export class Auth {
+export class AuthController {
   async login(req: Request, res: Response) {
     const { email, password } = req.body;
 
@@ -17,7 +18,6 @@ export class Auth {
       });
     }
 
-    //verifica se o email é valido
     const emailRegex = /\S+@\S+\.\S+/;
     if (!emailRegex.test(email)) {
       return res.status(400).json({
@@ -42,17 +42,14 @@ export class Auth {
         });
       }
 
-      const userId = user.id;
-      const token = jwt.sign(
+      const token = JwtUtils.generateToken(
         { userId: user.id, email: user.email },
-        "chave_secreta",
-        {
-          expiresIn: "1h", // Define a validade do token (opcional)
-        }
+        "1h"
       );
+
       return res
         .status(200)
-        .json({ token, message: "Logado com sucesso", userId });
+        .json({ token, message: "Logado com sucesso", userId: user.id });
     } catch (error) {
       console.log(error);
       return res.status(500).json({
@@ -60,31 +57,37 @@ export class Auth {
       });
     }
   }
-
   async getProfile(req: Request, res: Response) {
-    const { authorization } = req.headers;
+    try {
+      const { authorization } = req.headers;
 
-    if (!authorization) {
+      if (!authorization) {
+        return res.status(401).json({
+          message: "Não autorizado",
+        });
+      }
+
+      const token = authorization.split(" ")[1];
+
+      const { userId } = JwtUtils.verifyToken(token) as JwtPayload;
+
+      const user = await UserRepository.findOne({ where: { id: userId } });
+
+      if (!user) {
+        return res.status(401).json({
+          message: "Não autorizado",
+        });
+      }
+
+      const { password: _, ...userLogged } = user;
+
+      return res.status(200).json({ userLogged });
+    } catch (error) {
+      console.error(error);
       return res.status(401).json({
         message: "Não autorizado",
       });
     }
-
-    const token = authorization.split(" ")[1];
-
-    const { id } = jwt.verify(token, "chave_secreta") as jwtPayload;
-
-    const user = await UserRepository.findOne({ where: { id } });
-
-    if (!user) {
-      return res.status(401).json({
-        message: "Não autorizado",
-      });
-    }
-
-    const { password: _, ...userLogged } = user;
-
-    return res.status(200).json({ userLogged });
   }
 
   verifyToken(req: Request, res: Response, next: any) {
@@ -98,7 +101,8 @@ export class Auth {
     }
 
     try {
-      jwt.verify(token, "chave_secreta");
+      const { userId } = JwtUtils.verifyToken(token) as JwtPayload;
+      req.user = { id: userId };
       next();
     } catch (error) {
       console.log(error);
