@@ -3,6 +3,7 @@ import { Router } from "express";
 import { UserController } from "./controllers/UserController";
 import { AuthController } from "./controllers/AuthController";
 import { ServiceController } from "./controllers/ServiceController";
+import { ActivityController } from "./controllers/ActivityController";
 
 const routes = Router();
 
@@ -39,6 +40,13 @@ routes.post(
   "/services",
   new AuthController().verifyToken,
   new ServiceController().create
+);
+
+//Rotas de atividades
+routes.post(
+  "/activities/:serviceId",
+  new AuthController().verifyToken,
+  new ActivityController().create
 );
 
 export default routes;

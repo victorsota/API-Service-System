@@ -1,6 +1,13 @@
 // ServiceEntity.ts
-import { Column, Entity, ManyToOne, PrimaryGeneratedColumn } from "typeorm";
+import {
+  Column,
+  Entity,
+  ManyToOne,
+  OneToMany,
+  PrimaryGeneratedColumn,
+} from "typeorm";
 import { UserEntity } from "./UserEntity";
+import { ActivitiesEntity } from "./ActivitiesEntity";
 
 @Entity("services")
 export class ServiceEntity {
@@ -33,4 +40,7 @@ export class ServiceEntity {
 
   @ManyToOne(() => UserEntity, (user) => user.services)
   user: UserEntity;
+
+  @OneToMany(() => ActivitiesEntity, (activities) => activities.service)
+  services: ServiceEntity[];
 }
